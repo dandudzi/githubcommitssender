@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">GitHubCommitsSender</string>
+    <string name="search_hint">owner/repository</string>
+    <string name="search">Search</string>
+    <string name="clear_search_history">Clear search history</string>
+    <string name="unauathenticated_msg">For unauthenticated requests, the rate limit allows for up to 60 requests per hour to GithubAPI</string>
 </resources>
