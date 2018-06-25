@@ -1,4 +1,4 @@
-package com.dudziak.daniel.githubcommitssender
+package com.dudziak.daniel.githubcommitssender.util
 
 import android.content.SharedPreferences
 import android.support.v7.app.ActionBar

@@ -1,4 +1,4 @@
-package com.dudziak.daniel.githubcommitssender
+package com.dudziak.daniel.githubcommitssender.util
 
 import android.content.SearchRecentSuggestionsProvider
 
@@ -10,6 +10,9 @@ class SuggestionProvider : SearchRecentSuggestionsProvider() {
     }
 
     init {
-        setupSuggestions(AUTHORITY, MODE)
+        setupSuggestions(
+            AUTHORITY,
+            MODE
+        )
     }
 }
