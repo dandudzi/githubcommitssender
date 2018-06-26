@@ -8,7 +8,7 @@ object Repository {
         const val COLUMN_NAME_ID = "id"
         const val COLUMN_NAME_DATE = "date"
 
-        const val COLUMN_NAME_ID_FOREGIN_KEY = "id"
+        const val COLUMN_NAME_ID_FOREIGN_KEY = "id"
         const val TABLE_NAME_COMMITS = "Commits"
         const val COLUMN_NAME_SHA = "sha"
         const val COLUMN_NAME_AUTHOR = "author"

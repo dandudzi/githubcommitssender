@@ -3,7 +3,7 @@ package com.dudziak.daniel.githubcommitssender.util
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DateHelper(){
+class DateHelper {
     companion object {
         fun stringToDate(date: String): Date {
             val tz = TimeZone.getTimeZone("UTC")

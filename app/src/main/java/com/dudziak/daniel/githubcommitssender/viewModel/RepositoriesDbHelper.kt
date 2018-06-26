@@ -17,11 +17,11 @@ private const val SQL_CREATE_ENTRIES =
 
 private const val SQL_CREATE_ENTRIES_COMMITS =
     "CREATE TABLE ${Repository.Entry.TABLE_NAME_COMMITS} (" +
-            "${Repository.Entry.COLUMN_NAME_ID_FOREGIN_KEY} INTEGER," +
+            "${Repository.Entry.COLUMN_NAME_ID_FOREIGN_KEY} INTEGER," +
             "${Repository.Entry.COLUMN_NAME_SHA} TEXT," +
             "${Repository.Entry.COLUMN_NAME_AUTHOR} TEXT," +
             "${Repository.Entry.COLUMN_NAME_MESSAGE} TEXT," +
-            "FOREIGN KEY(${Repository.Entry.COLUMN_NAME_ID_FOREGIN_KEY}) REFERENCES ${Repository.Entry.TABLE_NAME}(${Repository.Entry.COLUMN_NAME_ID}))"
+            "FOREIGN KEY(${Repository.Entry.COLUMN_NAME_ID_FOREIGN_KEY}) REFERENCES ${Repository.Entry.TABLE_NAME}(${Repository.Entry.COLUMN_NAME_ID}))"
 
 private const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS ${Repository.Entry.TABLE_NAME}"
 
@@ -78,7 +78,7 @@ class RepositoriesDbHelper(context: Context) :
             val selection = "${Repository.Entry.COLUMN_NAME_ID} = ?"
             val selectionArgs = arrayOf(repositoryName)
 
-            val cursor = db.query(
+            return db.query(
                 Repository.Entry.TABLE_NAME,   // The table to query
                 projection,             // The array of columns to return (pass null to get all)
                 selection,              // The columns for the WHERE clause
@@ -87,7 +87,6 @@ class RepositoriesDbHelper(context: Context) :
                 null,                   // don't filter by row groups
                 null               // The sort order
             )
-            return cursor
         }
 
         private fun updateRepositoryDate(_db: RepositoriesDbHelper, id: String, date: String) {
@@ -111,10 +110,10 @@ class RepositoriesDbHelper(context: Context) :
             repositoryID: String,
             date: Date
         ): Boolean {
-            if (isRepositoryExist(db, repositoryID))
-                return isRepositoryUpToDate(db, repositoryID, date)
+            return if (isRepositoryExist(db, repositoryID))
+                isRepositoryUpToDate(db, repositoryID, date)
             else
-                return false
+                false
         }
 
         private fun isRepositoryUpToDate(
@@ -141,13 +140,13 @@ class RepositoriesDbHelper(context: Context) :
             val db = _db.readableDatabase
             val projection =
                 arrayOf(
-                    Repository.Entry.COLUMN_NAME_ID_FOREGIN_KEY,
+                    Repository.Entry.COLUMN_NAME_ID_FOREIGN_KEY,
                     Repository.Entry.COLUMN_NAME_SHA,
                     Repository.Entry.COLUMN_NAME_AUTHOR,
                     Repository.Entry.COLUMN_NAME_MESSAGE
                 )
 
-            val selection = "${Repository.Entry.COLUMN_NAME_ID_FOREGIN_KEY} = ?"
+            val selection = "${Repository.Entry.COLUMN_NAME_ID_FOREIGN_KEY} = ?"
             val selectionArgs = arrayOf(repositoryID)
 
             val cursor = db.query(
@@ -166,7 +165,7 @@ class RepositoriesDbHelper(context: Context) :
                         getString(getColumnIndexOrThrow(Repository.Entry.COLUMN_NAME_AUTHOR))
                     val message =
                         getString(getColumnIndexOrThrow(Repository.Entry.COLUMN_NAME_MESSAGE))
-                    commits.add(Commit(message,sha,author))
+                    commits.add(Commit(message, sha, author))
                 }
             }
         }
@@ -183,7 +182,7 @@ class RepositoriesDbHelper(context: Context) :
                 db.delete(Repository.Entry.TABLE_NAME_COMMITS, selection, selectionArgs)
             for (commit in commits) {
                 val values = ContentValues().apply {
-                    put(Repository.Entry.COLUMN_NAME_ID_FOREGIN_KEY, repositoryID.toInt())
+                    put(Repository.Entry.COLUMN_NAME_ID_FOREIGN_KEY, repositoryID.toInt())
                     put(Repository.Entry.COLUMN_NAME_SHA, commit.shaValue)
                     put(Repository.Entry.COLUMN_NAME_AUTHOR, commit.authorName)
                     put(Repository.Entry.COLUMN_NAME_MESSAGE, commit.message)
@@ -196,7 +195,6 @@ class RepositoriesDbHelper(context: Context) :
             val db = _db.writableDatabase
             db.delete(Repository.Entry.TABLE_NAME_COMMITS, null, null)
             db.delete(Repository.Entry.TABLE_NAME, null, null)
-
         }
     }
 }

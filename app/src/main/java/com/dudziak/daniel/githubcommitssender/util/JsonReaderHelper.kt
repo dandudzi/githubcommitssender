@@ -3,7 +3,7 @@ package com.dudziak.daniel.githubcommitssender.util
 import android.util.JsonReader
 import com.dudziak.daniel.githubcommitssender.model.Commit
 
-class JsonReaderHelper() {
+class JsonReaderHelper {
     companion object {
 
         fun readRepositoryIDAndDateOfLastUpdate(jsonReader: JsonReader): Pair<String, String> {
@@ -12,12 +12,10 @@ class JsonReaderHelper() {
             jsonReader.beginObject()
             while (jsonReader.hasNext()) {
                 val key = jsonReader.nextName()
-                if (key == "updated_at") {
-                    date = jsonReader.nextString()
-                } else if (key == "id") {
-                    id = jsonReader.nextString()
-                } else {
-                    jsonReader.skipValue()
+                when (key) {
+                    "updated_at" -> date = jsonReader.nextString()
+                    "id" -> id = jsonReader.nextString()
+                    else -> jsonReader.skipValue()
                 }
             }
             jsonReader.endObject()
@@ -41,14 +39,14 @@ class JsonReaderHelper() {
             jsonReader.beginObject()
             while (jsonReader.hasNext()) {
                 val key = jsonReader.nextName()
-                if (key == "sha") {
-                    shaValue = jsonReader.nextString()
-                } else if (key == "commit") {
-                    val pair = readCommitBody(jsonReader)
-                    authorName = pair.second
-                    message = pair.first
-                } else {
-                    jsonReader.skipValue()
+                when (key) {
+                    "sha" -> shaValue = jsonReader.nextString()
+                    "commit" -> {
+                        val pair = readCommitBody(jsonReader)
+                        authorName = pair.second
+                        message = pair.first
+                    }
+                    else -> jsonReader.skipValue()
                 }
             }
             jsonReader.endObject()
@@ -61,12 +59,10 @@ class JsonReaderHelper() {
             jsonReader.beginObject()
             while (jsonReader.hasNext()) {
                 val key = jsonReader.nextName()
-                if (key == "author") {
-                    authorName = readAuthorName(jsonReader)
-                } else if (key == "message") {
-                    message = jsonReader.nextString()
-                } else {
-                    jsonReader.skipValue()
+                when (key) {
+                    "author" -> authorName = readAuthorName(jsonReader)
+                    "message" -> message = jsonReader.nextString()
+                    else -> jsonReader.skipValue()
                 }
             }
             jsonReader.endObject()

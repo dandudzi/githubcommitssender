@@ -84,7 +84,7 @@ class MainController(private val mainActivity: MainActivity) {
 
     private fun handleCommitsIntent(intent: Intent) {
         val responseCode = intent.extras.getInt(GithubCommitsRequester.RESPONSE_CODE)
-        if(responseCode == 200){
+        if (responseCode == 200) {
             val repositoryID = intent.extras.getString(GithubCommitsRequester.REPOSITORY_ID)
             mainActivity.setRepositoryID(repositoryID)
 
@@ -142,14 +142,14 @@ class MainController(private val mainActivity: MainActivity) {
 
     }
 
-    fun isServiceRunning(serviceClassName: String): Boolean {
+    private fun isServiceRunning(serviceClassName: String): Boolean {
         val activityManager =
             mainActivity.applicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val services = activityManager.getRunningServices(Integer.MAX_VALUE)
 
         for (runningServiceInfo in services) {
             Log.d("DAJ", runningServiceInfo.service.className)
-            if (runningServiceInfo.service.className.equals(serviceClassName)) {
+            if (runningServiceInfo.service.className == serviceClassName) {
                 return true
             }
         }

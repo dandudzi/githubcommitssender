@@ -70,8 +70,8 @@ class MainActivity : AppCompatActivity() {
 
         setUpSendsCommitButton(selectionTracker)
 
-        progressBar = findViewById<ProgressBar>(R.id.progressBar)
-        repositoryID = findViewById<TextView>(R.id.repository_id)
+        progressBar = findViewById(R.id.progressBar)
+        repositoryID = findViewById(R.id.repository_id)
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
             broadcastReceiver,
