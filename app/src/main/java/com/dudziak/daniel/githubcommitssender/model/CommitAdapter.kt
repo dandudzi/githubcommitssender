@@ -4,11 +4,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
-import com.dudziak.daniel.githubcommitssender.R
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
+import com.dudziak.daniel.githubcommitssender.R
 
 
 class CommitAdapter(private val commits: List<Commit>) :
@@ -18,9 +17,9 @@ class CommitAdapter(private val commits: List<Commit>) :
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var authorNameTextView: TextView = itemView.findViewById(R.id.author_name)
-        var shaValueTextView: TextView = itemView.findViewById(R.id.sha_value)
-        var commitMessageTextView: TextView = itemView.findViewById(R.id.commit_message)
+        private var authorNameTextView: TextView = itemView.findViewById(R.id.author_name)
+        private var shaValueTextView: TextView = itemView.findViewById(R.id.sha_value)
+        private var commitMessageTextView: TextView = itemView.findViewById(R.id.commit_message)
 
         fun getItemDetails(): ItemDetailsLookup.ItemDetails<Commit> {
             return CommitDetail(adapterPosition, commits[adapterPosition])

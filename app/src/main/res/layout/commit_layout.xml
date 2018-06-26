@@ -5,23 +5,29 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="10dp"
     android:paddingBottom="10dp"
     android:background="@drawable/commit_background">
 
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="?android:attr/listDivider"
+        android:paddingBottom="10dp"/>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="3dp"
-        android:paddingLeft="3dp">
+        android:paddingStart="3dp"
+        tools:ignore="RtlSymmetry">
 
         <TextView
             android:id="@+id/label_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Author's name:"
+            android:text="@string/author_name_label"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent" />
@@ -35,20 +41,22 @@
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/label_author" />
+            app:layout_constraintStart_toEndOf="@+id/label_author"
+            tools:ignore="HardcodedText" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="3dp"
-        android:paddingLeft="4dp">
+        android:paddingStart="4dp"
+        tools:ignore="RtlSymmetry">
 
         <TextView
             android:id="@+id/label_sha"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SHA value:"
+            android:text="@string/sha_value_label"
             android:textSize="17sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent" />
@@ -62,20 +70,22 @@
             android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/label_sha" />
+            app:layout_constraintStart_toEndOf="@+id/label_sha"
+            tools:ignore="HardcodedText" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="3dp"
-        android:paddingLeft="5dp">
+        android:paddingStart="5dp"
+        tools:ignore="RtlSymmetry">
 
         <TextView
             android:id="@+id/label_commit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Commit message:"
+            android:text="@string/commit_message_label"
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent" />
@@ -91,6 +101,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/label_commit"
-            app:layout_constraintWidth_default="wrap" />
+            app:layout_constraintWidth_default="wrap"
+            tools:ignore="HardcodedText" />
     </android.support.constraint.ConstraintLayout>
 </LinearLayout>

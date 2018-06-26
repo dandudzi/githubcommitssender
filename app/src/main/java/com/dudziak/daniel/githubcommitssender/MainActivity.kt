@@ -1,17 +1,16 @@
 package com.dudziak.daniel.githubcommitssender
 
 import android.app.SearchManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.widget.Toast
-import androidx.recyclerview.selection.ItemDetailsLookup
-import androidx.recyclerview.selection.OnItemActivatedListener
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import com.dudziak.daniel.githubcommitssender.controllers.MainController
@@ -19,62 +18,33 @@ import com.dudziak.daniel.githubcommitssender.model.Commit
 import com.dudziak.daniel.githubcommitssender.model.CommitAdapter
 import com.dudziak.daniel.githubcommitssender.model.CommitKeyProvider
 import com.dudziak.daniel.githubcommitssender.model.CommitLookup
-import android.support.annotation.NonNull
-import androidx.recyclerview.selection.OnDragInitiatedListener
-import android.content.ClipData.Item
 import android.os.PersistableBundle
-import android.support.v4.app.FragmentActivity
-import android.support.v7.view.ActionMode
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.*
-import com.dudziak.daniel.githubcommitssender.controllers.ActionController
-import java.nio.file.Files.size
+import android.view.View
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 
 
 class MainActivity : AppCompatActivity() {
     private val mainController = MainController(this)
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var viewAdapter: CommitAdapter
+    private lateinit var repositoryID: TextView
     private lateinit var viewManager: RecyclerView.LayoutManager
-    private var actionMode: ActionMode? = null
+    private lateinit var progressBar: ProgressBar
+
+    lateinit var viewAdapter: CommitAdapter
+
     var selectionTracker: SelectionTracker<Commit>? = null
-    val list = listOf(
-        Commit(
-            "dfklja dfajklfjas kdf adasjf aksdjfas kd|\nfaskdjfa fakfj asdfadfjad lkfadfjas dfja",
-            "6dcb09b5b57875f334f61aebed695e2e4193db5e",
-            "Daniel"
-        ),
-        Commit(
-            "dfklja dfajklfjas kdf adasjf aksdjfas kddasfasdfklasdfjaskldfasd|\nfaskdjfa fakfj asdfadfjad lkfadfjas dfja",
-            "asdf92rj3908uaf902r30j2fuw890132",
-            "Daniel2"
-        ),
-        Commit(
-            "dfklja dfajklfjas kdf adasjf aksdjfas kdfasdfklasd;flasd;lkfasdkfasd|\nfaskdjfa fakfj asdfadfjad lkfadfjas dfja",
-            "asdf92rj3908uaf902r30j2fuw890132",
-            "Daniel3"
-        ),
-        Commit(
-            "dfklja dfajklfjas kdf adasjf aksdjfas kdfasdfklasd;flasd;lkfasdkfasd|\nfaskdjfa fakfj asdfadfjad lkfadfjas dfja",
-            "asdf92rj3908uaf902r30j2fuw890132",
-            "Daniel4"
-        ),
-        Commit(
-            "dfklja dfajklfjas kdf adasjf aksdjfas kdfasdfklasd;flasd;lkfasdkfasd|\nfaskdjfa fakfj asdfadfjad lkfadfjas dfja",
-            "asdf92rj3908uaf902r30j2fuw890132",
-            "Daniel5"
-        ),
-        Commit(
-            "dfklja dfajklfjas kdf adasjf aksdjfas kdfasdfklasd;flasd;lkfasdkfasd|\nfaskdjfa fakfj asdfadfjad lkfadfjas dfja",
-            "asdf92rj3908uaf902r30j2fuw890132",
-            "Daniel6"
-        ),
-        Commit(
-            "dfklja dfajklfjas kdf adasjf aksdjfas kdfasdfklasd;flasd;lkfasdkfasd|\nfaskdjfa fakfj asdfadfjad lkfadfjas dfja",
-            "asdf92rj3908uaf902r30j2fuw890132",
-            "Daniel7"
-        )
-    )
+    val list = mutableListOf<Commit>()
+
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(contxt: Context?, intent: Intent?) {
+            mainController.handleIntent(intent)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,94 +61,59 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById<RecyclerView>(R.id.recycler_view).apply {
             layoutManager = viewManager
             adapter = viewAdapter
-            itemAnimator = DefaultItemAnimator()
         }
 
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                this@MainActivity,
-                LinearLayoutManager.VERTICAL
-            )
+        val selectionTracker = setUpSelectionTracker()
+
+        viewAdapter.selectionTracker = selectionTracker
+        this.selectionTracker = selectionTracker
+
+        setUpSendsCommitButton(selectionTracker)
+
+        progressBar = findViewById<ProgressBar>(R.id.progressBar)
+        repositoryID = findViewById<TextView>(R.id.repository_id)
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            broadcastReceiver,
+            IntentFilter(GithubCommitsRequester.ACTION_SEND_COMMITS)
         )
 
+        mainController.handleIntent(intent)
 
-        var selectionTracker = SelectionTracker.Builder<Commit>(
+        if (savedInstanceState != null) {
+            selectionTracker!!.onRestoreInstanceState(savedInstanceState)
+        }
+    }
+
+
+    private fun setUpToolbar() {
+        val toolbar: Toolbar? = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        toolbar!!.setOnClickListener {
+            showToast(getString(R.string.unauthenticated_msg))
+        }
+    }
+
+    private fun setUpSelectionTracker(): SelectionTracker<Commit>? {
+        return SelectionTracker.Builder(
             "my-selection-id",
             recyclerView,
             CommitKeyProvider(1, list),
             CommitLookup(recyclerView),
             StorageStrategy.createParcelableStorage(Commit::class.java)
         )
-
-            .withOnDragInitiatedListener {
-                Log.d("COS TAM COS TAM", "onDragInitiated")
-                true
-            }.withOnItemActivatedListener { item, e ->
-                Log.d("DAJ", "Selected ItemId: " + selectionTracker!!.hasSelection())
-                selectionTracker!!.select(item.selectionKey!!)
+            .withOnItemActivatedListener { item, e ->
+                Log.d("DAJ", "Selected ItemId: " + this.selectionTracker!!.hasSelection())
+                this.selectionTracker!!.select(item.selectionKey!!)
                 recyclerView.invalidateItemDecorations()
-                recyclerView.invalidate()
-                recyclerView.adapter!!.notifyDataSetChanged()
-
                 true
             }
             .build()
-
-
-
-        viewAdapter.selectionTracker = selectionTracker
-        this.selectionTracker = selectionTracker
-
-        selectionTracker.addObserver(object : SelectionTracker.SelectionObserver<Commit>() {
-            override fun onSelectionChanged() {
-                super.onSelectionChanged()
-                if (selectionTracker.hasSelection() && actionMode == null) {
-                    actionMode = startSupportActionMode(
-                        ActionController(
-                            this@MainActivity,
-                            selectionTracker
-                        )
-                    )
-                } else if (!selectionTracker.hasSelection() && actionMode != null) {
-                    actionMode!!.finish()
-                    actionMode = null
-                }
-                val itemIterable = selectionTracker.selection.iterator()
-                while (itemIterable.hasNext()) {
-                    Log.i("NEXT NEXT", itemIterable.next().toString())
-                }
-            }
-
-            override fun onSelectionRefresh() {
-                super.onSelectionRefresh()
-            }
-
-            override fun onItemStateChanged(key: Commit, selected: Boolean) {
-                super.onItemStateChanged(key, selected)
-            }
-
-            override fun onSelectionRestored() {
-                super.onSelectionRestored()
-            }
-        })
-
-        mainController.handleIntent(intent)
-        if (savedInstanceState != null) {
-            selectionTracker.onRestoreInstanceState(savedInstanceState)
-        }
     }
 
-    private fun setUpToolbar() {
-        val toolbar: Toolbar? = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        toolbar!!.setOnClickListener {
-            Toast.makeText(
-                this@MainActivity,
-                getString(R.string.unauathenticated_msg),
-                Toast.LENGTH_LONG
-            )
-                .show()
-        }
+    private fun setUpSendsCommitButton(selectionTracker: SelectionTracker<Commit>?) {
+        val img = findViewById<ImageView>(R.id.send_message)
+        img.setOnClickListener { mainController.handleSendMessageAction(selectionTracker) }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -193,7 +128,7 @@ class MainActivity : AppCompatActivity() {
         mainController.menu = menu
         val searchItem = menu!!.findItem(R.id.search_action)
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        val searchView = menu!!.findItem(R.id.search_action).actionView as SearchView
+        val searchView = menu.findItem(R.id.search_action).actionView as SearchView
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         searchView.setIconifiedByDefault(false)
@@ -218,13 +153,13 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.clear_history_action -> {
                 mainController.clearSearchHistory()
-                return true
+                true
             }
             else -> {
-                return super.onOptionsItemSelected(item)
+                super.onOptionsItemSelected(item)
             }
         }
     }
@@ -238,4 +173,37 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState, outPersistentState)
         selectionTracker!!.onSaveInstanceState(outState)
     }
+
+    fun showToast(msg: String) {
+        Toast.makeText(
+            this,
+            msg,
+            Toast.LENGTH_LONG
+        )
+            .show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        LocalBroadcastManager.getInstance(this)
+            .unregisterReceiver(broadcastReceiver)
+    }
+
+    fun showProgressBar() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    fun closeProgressbar() {
+        progressBar.visibility = View.INVISIBLE
+    }
+
+    fun isProgressbarVisible(): Boolean = progressBar.visibility == View.VISIBLE
+    fun setRepositoryID(repositoryID: String?) {
+        if (repositoryID.isNullOrEmpty()) {
+            this.repositoryID.text = ""
+        } else {
+            this.repositoryID.text = "Repository ID: $repositoryID"
+        }
+    }
+
 }

@@ -7,7 +7,7 @@ class RequestCounter(private val sharedPref: SharedPreferences) {
     private var counter: Int = 0
     private var timestamp: Long = 0
 
-    var requestsPerPeriodTime = 60
+    private var requestsPerPeriodTime = 60
         set(value) {
             if (value > 0)
                 field = value
@@ -32,7 +32,7 @@ class RequestCounter(private val sharedPref: SharedPreferences) {
         with(sharedPref.edit()) {
             putLong(TIMESTAMP, timestamp)
             putInt(COUNTER, counter)
-            commit()
+            apply()
         }
     }
 
@@ -47,7 +47,7 @@ class RequestCounter(private val sharedPref: SharedPreferences) {
     }
 
     private fun checkTimePeriod() {
-        if (getTimestamp() - timestamp >= TIME_PERIOD){
+        if (getTimestamp() - timestamp >= TIME_PERIOD) {
             timestamp = getTimestamp()
             counter = 0
         }

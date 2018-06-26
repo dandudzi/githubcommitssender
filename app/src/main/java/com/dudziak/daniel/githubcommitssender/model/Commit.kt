@@ -8,8 +8,7 @@ data class Commit(val message: String, val shaValue: String, val authorName: Str
         parcel.readString(),
         parcel.readString(),
         parcel.readString()
-    ) {
-    }
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(message)
@@ -29,5 +28,12 @@ data class Commit(val message: String, val shaValue: String, val authorName: Str
         override fun newArray(size: Int): Array<Commit?> {
             return arrayOfNulls(size)
         }
+    }
+
+    fun toMessage(): String {
+        return """Author: $authorName
+            |SHA value: $shaValue
+            |Message: "$message"
+            |""".trimMargin()
     }
 }

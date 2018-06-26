@@ -5,8 +5,8 @@ import android.content.SearchRecentSuggestionsProvider
 
 class SuggestionProvider : SearchRecentSuggestionsProvider() {
     companion object {
-        val AUTHORITY = "com.dudziak.daniel.githubcommitssender.SuggestionProvider"
-        val MODE = DATABASE_MODE_QUERIES
+        const val AUTHORITY = "com.dudziak.daniel.githubcommitssender.SuggestionProvider"
+        const val MODE = DATABASE_MODE_QUERIES
     }
 
     init {

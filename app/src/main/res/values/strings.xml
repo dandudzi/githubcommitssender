@@ -3,6 +3,11 @@
     <string name="search_hint">owner/repository</string>
     <string name="search">Search</string>
     <string name="clear_search_history">Clear search history</string>
-    <string name="unauathenticated_msg">For unauthenticated requests, the rate limit allows for up to 60 requests per hour to GithubAPI</string>
-    <string name="repository_id">Repositorr ID: 123456789</string>
+    <string name="unauthenticated_msg">For unauthenticated requests, the rate limit allows for up to 60 requests per hour to GithubAPI</string>
+    <string name="repository_id">Repository ID: 123456789</string>
+    <string name="content_description_send_commit">Send commits button</string>
+    <string name="author_name_label">Author\'s name:</string>
+    <string name="sha_value_label">SHA value:</string>
+    <string name="commit_message_label">Commit message:</string>
+    <string name="MyApp">com.daniel.dudziak.githubcommitssender</string>
 </resources>
