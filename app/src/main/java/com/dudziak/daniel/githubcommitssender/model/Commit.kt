@@ -36,4 +36,5 @@ data class Commit(val message: String, val shaValue: String, val authorName: Str
             |Message: "$message"
             |""".trimMargin()
     }
+
 }

@@ -15,9 +15,9 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import com.dudziak.daniel.githubcommitssender.controllers.MainController
 import com.dudziak.daniel.githubcommitssender.model.Commit
-import com.dudziak.daniel.githubcommitssender.model.CommitAdapter
-import com.dudziak.daniel.githubcommitssender.model.CommitKeyProvider
-import com.dudziak.daniel.githubcommitssender.model.CommitLookup
+import com.dudziak.daniel.githubcommitssender.viewModel.CommitAdapter
+import com.dudziak.daniel.githubcommitssender.viewModel.CommitKeyProvider
+import com.dudziak.daniel.githubcommitssender.viewModel.CommitLookup
 import android.os.PersistableBundle
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.*
@@ -139,11 +139,13 @@ class MainActivity : AppCompatActivity() {
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(menuItem: MenuItem): Boolean {
                 menu.findItem(R.id.clear_history_action).isVisible = false
+                menu.findItem(R.id.clear_database_action).isVisible = false
                 return true
             }
 
             override fun onMenuItemActionCollapse(menuItem: MenuItem): Boolean {
                 menu.findItem(R.id.clear_history_action).isVisible = true
+                menu.findItem(R.id.clear_database_action).isVisible = true
                 invalidateOptionsMenu()
                 return true
             }
@@ -156,6 +158,10 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.clear_history_action -> {
                 mainController.clearSearchHistory()
+                true
+            }
+            R.id.clear_database_action -> {
+                mainController.clearDatabase()
                 true
             }
             else -> {

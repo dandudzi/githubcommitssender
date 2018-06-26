@@ -1,6 +1,7 @@
-package com.dudziak.daniel.githubcommitssender.model
+package com.dudziak.daniel.githubcommitssender.viewModel
 
 import androidx.recyclerview.selection.ItemKeyProvider
+import com.dudziak.daniel.githubcommitssender.model.Commit
 
 
 class CommitKeyProvider(scope: Int, private val itemList: List<Commit>) :

@@ -3,22 +3,25 @@ package com.dudziak.daniel.githubcommitssender.util
 import android.util.JsonReader
 import com.dudziak.daniel.githubcommitssender.model.Commit
 
-class JsonReaderHelper(){
+class JsonReaderHelper() {
     companion object {
 
-        fun readKey(jsonReader: JsonReader, _key: String): String {
-            var tmp = ""
+        fun readRepositoryIDAndDateOfLastUpdate(jsonReader: JsonReader): Pair<String, String> {
+            var id = ""
+            var date = ""
             jsonReader.beginObject()
             while (jsonReader.hasNext()) {
                 val key = jsonReader.nextName()
-                if (key == _key) {
-                    tmp = jsonReader.nextString()
+                if (key == "updated_at") {
+                    date = jsonReader.nextString()
+                } else if (key == "id") {
+                    id = jsonReader.nextString()
                 } else {
                     jsonReader.skipValue()
                 }
             }
             jsonReader.endObject()
-            return tmp
+            return Pair(id, date)
         }
 
 

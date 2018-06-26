@@ -1,6 +1,7 @@
-package com.dudziak.daniel.githubcommitssender.model
+package com.dudziak.daniel.githubcommitssender.viewModel
 
 import androidx.recyclerview.selection.ItemDetailsLookup
+import com.dudziak.daniel.githubcommitssender.model.Commit
 
 
 class CommitDetail(private val adapterPosition: Int, private val selectionKey: Commit) :

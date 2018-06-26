@@ -1,11 +1,14 @@
 package com.dudziak.daniel.githubcommitssender.controllers
 
+import android.app.ActivityManager
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.provider.SearchRecentSuggestions
+import android.util.Log
 import android.view.Menu
-import android.widget.Toast
 import androidx.recyclerview.selection.SelectionTracker
 import com.dudziak.daniel.githubcommitssender.GithubCommitsRequester
 import com.dudziak.daniel.githubcommitssender.MainActivity
@@ -13,12 +16,7 @@ import com.dudziak.daniel.githubcommitssender.R
 import com.dudziak.daniel.githubcommitssender.model.Commit
 import com.dudziak.daniel.githubcommitssender.util.RequestCounter
 import com.dudziak.daniel.githubcommitssender.util.SuggestionProvider
-import android.app.Application
-import android.support.v4.content.ContextCompat.getSystemService
-import android.app.ActivityManager
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
-import android.util.Log
+import com.dudziak.daniel.githubcommitssender.viewModel.RepositoriesDbHelper
 
 
 class MainController(private val mainActivity: MainActivity) {
@@ -85,18 +83,24 @@ class MainController(private val mainActivity: MainActivity) {
     }
 
     private fun handleCommitsIntent(intent: Intent) {
-        val repositoryID = intent.extras.getString(GithubCommitsRequester.REPOSITORY_ID)
-        mainActivity.setRepositoryID(repositoryID)
+        val responseCode = intent.extras.getInt(GithubCommitsRequester.RESPONSE_CODE)
+        if(responseCode == 200){
+            val repositoryID = intent.extras.getString(GithubCommitsRequester.REPOSITORY_ID)
+            mainActivity.setRepositoryID(repositoryID)
 
-        val list = intent.extras.getParcelableArray(GithubCommitsRequester.COMMITS_LIST)
-        mainActivity.list.clear()
-        for (item in list) {
-            mainActivity.list.add(item as Commit)
+            val list = intent.extras.getParcelableArray(GithubCommitsRequester.COMMITS_LIST)
+            mainActivity.list.clear()
+            for (item in list) {
+                mainActivity.list.add(item as Commit)
+            }
+            mainActivity.selectionTracker!!.clearSelection()
+            mainActivity.viewAdapter.notifyDataSetChanged()
+            requestCounter!!.addOneRequest()
+            titleRefresher!!.refreshActionBarTitle()
+
+        } else {
+            mainActivity.showToast("Ups something went wrong")
         }
-        mainActivity.selectionTracker!!.clearSelection()
-        mainActivity.viewAdapter.notifyDataSetChanged()
-        requestCounter!!.addOneRequest()
-        titleRefresher!!.refreshActionBarTitle()
         mainActivity.closeProgressbar()
     }
 
@@ -150,6 +154,12 @@ class MainController(private val mainActivity: MainActivity) {
             }
         }
         return false
+    }
+
+    fun clearDatabase() {
+        val db = RepositoriesDbHelper(mainActivity.baseContext)
+        RepositoriesDbHelper.clearDataBase(db)
+        db.close()
     }
 
 }

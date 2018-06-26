@@ -10,4 +10,5 @@
     <string name="sha_value_label">SHA value:</string>
     <string name="commit_message_label">Commit message:</string>
     <string name="MyApp">com.daniel.dudziak.githubcommitssender</string>
+    <string name="clear_offline_data">Clear offline data</string>
 </resources>

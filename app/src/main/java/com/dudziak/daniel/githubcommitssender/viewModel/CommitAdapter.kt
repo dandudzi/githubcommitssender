@@ -1,4 +1,4 @@
-package com.dudziak.daniel.githubcommitssender.model
+package com.dudziak.daniel.githubcommitssender.viewModel
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import com.dudziak.daniel.githubcommitssender.R
+import com.dudziak.daniel.githubcommitssender.model.Commit
 
 
 class CommitAdapter(private val commits: List<Commit>) :
@@ -22,7 +23,10 @@ class CommitAdapter(private val commits: List<Commit>) :
         private var commitMessageTextView: TextView = itemView.findViewById(R.id.commit_message)
 
         fun getItemDetails(): ItemDetailsLookup.ItemDetails<Commit> {
-            return CommitDetail(adapterPosition, commits[adapterPosition])
+            return CommitDetail(
+                adapterPosition,
+                commits[adapterPosition]
+            )
         }
 
         fun bind(commit: Commit, isActive: Boolean) {
@@ -34,7 +38,7 @@ class CommitAdapter(private val commits: List<Commit>) :
     }
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommitAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val context = parent.context
         val inflater = LayoutInflater.from(context)
         val contactView = inflater.inflate(R.layout.commit_layout, parent, false)
@@ -42,7 +46,7 @@ class CommitAdapter(private val commits: List<Commit>) :
     }
 
 
-    override fun onBindViewHolder(viewHolder: CommitAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val commit = commits[position]
 
         viewHolder.bind(commit, selectionTracker!!.isSelected(commit))

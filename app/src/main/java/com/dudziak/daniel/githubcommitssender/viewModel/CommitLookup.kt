@@ -1,8 +1,9 @@
-package com.dudziak.daniel.githubcommitssender.model
+package com.dudziak.daniel.githubcommitssender.viewModel
 
 import android.support.v7.widget.RecyclerView
 import android.view.MotionEvent
 import androidx.recyclerview.selection.ItemDetailsLookup
+import com.dudziak.daniel.githubcommitssender.model.Commit
 
 
 class CommitLookup(private val recyclerView: RecyclerView) : ItemDetailsLookup<Commit>() {
