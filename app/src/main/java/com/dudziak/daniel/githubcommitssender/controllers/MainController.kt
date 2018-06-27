@@ -68,7 +68,7 @@ class MainController(private val mainActivity: MainActivity) {
         if (mainActivity.isProgressbarVisible() || isServiceRunning(GithubCommitsRequester::class.java.name)) {
             mainActivity.showToast("Ups we already working on your previous request")
         } else if (!isInternetConnection()) {
-            mainActivity.showToast("Ups there is not an internet connection")
+            mainActivity.showToast("Ups no internet connection")
         } else {
             GithubCommitsRequester.startActionRequestCommits(mainActivity, query)
             mainActivity.showProgressBar()
